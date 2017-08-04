@@ -61,9 +61,9 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Spree stuff
-gem 'spree', '~> 3.3.0.rc1'
-gem 'spree_auth_devise', '~> 3.3.0.rc1'
-gem 'spree_gateway', '~> 3.3.0.rc1'
+gem 'spree', '~> 3.3.0.rc2'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 
 # Manage env variables
 gem 'dotenv'
