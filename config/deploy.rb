@@ -17,7 +17,7 @@ set :deploy_via, :remote_cache
 
 # Setup rvm
 set :rvm_type, :user                     # Defaults to: :auto
-set :rvm_ruby_version, '2.3.2@shirt --create'      # Defaults to: 'default'
+set :rvm_ruby_version, '2.4.0@shirt --create'      # Defaults to: 'default'
 
 # Was getting not authorized to query Passenger so...
 set :passenger_restart_with_sudo, true
