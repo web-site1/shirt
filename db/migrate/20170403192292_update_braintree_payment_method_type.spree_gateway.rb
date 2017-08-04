@@ -1,5 +1,5 @@
 # This migration comes from spree_gateway (originally 20121017004102)
-class UpdateBraintreePaymentMethodType < ActiveRecord::Migration
+class UpdateBraintreePaymentMethodType < ActiveRecord::Migration[5.0]
   def up
     Spree::PaymentMethod.where(:type => "Spree::Gateway::Braintree").update_all(:type => "Spree::Gateway::BraintreeGateway")
   end

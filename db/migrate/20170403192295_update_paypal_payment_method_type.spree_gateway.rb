@@ -1,5 +1,5 @@
 # This migration comes from spree_gateway (originally 20131008221012)
-class UpdatePaypalPaymentMethodType < ActiveRecord::Migration
+class UpdatePaypalPaymentMethodType < ActiveRecord::Migration[5.0]
   def up
     Spree::PaymentMethod.where(:type => "Spree::Gateway::PayPal").update_all(:type => "Spree::Gateway::PayPalGateway")
   end

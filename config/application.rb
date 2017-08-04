@@ -8,8 +8,6 @@ Bundler.require(*Rails.groups)
 
 # Load environement variables defined in .env
 Dotenv.overload
-puts 'Loaded environment'
-puts "AWS_SECRET_ACCESS_KEY #{ENV['AWS_SECRET_ACCESS_KEY']}"
 
 module Shirt
   class Application < Rails::Application
