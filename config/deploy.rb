@@ -11,13 +11,13 @@ ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 set :deploy_to, "/var/www/#{fetch(:application)}"
 
 # Default value for :scm is :git
-set :scm, :git
+# old set :scm, :git
 set :ssh_options, { :forward_agent => true }
 set :deploy_via, :remote_cache
 
 # Setup rvm
 set :rvm_type, :user                     # Defaults to: :auto
-set :rvm_ruby_version, '2.4.0@shirt --create'      # Defaults to: 'default'
+set :rvm_ruby_version, '2.3.2@shirt --create'      # Defaults to: 'default'
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh

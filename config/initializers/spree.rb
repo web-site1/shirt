@@ -15,4 +15,42 @@ Spree.config do |config|
   # config.track_inventory_levels = false
 end
 
-Spree.user_class = "Spree::LegacyUser"
+Spree.user_class = "Spree::User"
+# Spree::Config.set(logo: "artistic-logo-white.png")
+Spree::Config.set(:products_per_page => 10)
+Spree::Config.set(:require_master_price => false)
+Spree::Config.set(:company => true)
+
+
+# Use S3 for product images
+
+attachment_config = {
+
+    s3_credentials: {
+        access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
+        secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+        bucket:            ENV['AWS_BUCKET']
+    },
+
+    storage:        :s3,
+    s3_headers:     { "Cache-Control" => "max-age=315576000" },
+    s3_protocol:    Rails.env.production? ? 'https' : 'http',
+    s3_region:      ENV['AWS_REGION'],
+    bucket:         ENV['AWS_BUCKET'],
+    url:            ":s3_domain_url",
+
+    styles: {
+        mini:     "48x48>",
+        small:    "100x100>",
+        product:  "240x240>",
+        large:    "600x600>"
+    },
+
+    path:           "/:class/:id/:style/:basename.:extension",
+    default_url:    "/:class/:id/:style/:basename.:extension",
+    default_style:  "product"
+}
+
+attachment_config.each do |key, value|
+  Spree::Image.attachment_definitions[:attachment][key.to_sym] = value
+end

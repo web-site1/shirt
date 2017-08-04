@@ -5,5 +5,7 @@ rescue LoadError => e
   raise unless e.message.include?('spring')
 end
 require_relative '../config/boot'
+require 'dotenv'
+Dotenv.load
 require 'rake'
 Rake.application.run

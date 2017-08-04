@@ -32,8 +32,8 @@ gem 'jbuilder'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# Cool tool for making cron jobs easy
+gem 'whenever', :require => false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -53,7 +53,7 @@ group :development do
   gem 'capistrano-rails', '~> 1.3'
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
-  gem 'sshkit', '~> 1.9.0'
+  # gem 'sshkit', '~> 1.9.0'
   gem 'progress_bar'
 end
 
@@ -64,3 +64,9 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'spree', '~> 3.3.0.rc1'
 gem 'spree_auth_devise', '~> 3.3.0.rc1'
 gem 'spree_gateway', '~> 3.3.0.rc1'
+
+# Manage env variables
+gem 'dotenv'
+
+# AWS
+gem 'aws-sdk'

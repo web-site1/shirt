@@ -6,6 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Load environement variables defined in .env
+Dotenv.load
+
 module Shirt
   class Application < Rails::Application
     
