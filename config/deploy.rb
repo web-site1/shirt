@@ -19,6 +19,9 @@ set :deploy_via, :remote_cache
 set :rvm_type, :user                     # Defaults to: :auto
 set :rvm_ruby_version, '2.3.2@shirt --create'      # Defaults to: 'default'
 
+# Was getting not authorized to query Passenger so...
+set :passenger_restart_with_sudo, true
+
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
 
@@ -33,7 +36,7 @@ set :rvm_ruby_version, '2.3.2@shirt --create'      # Defaults to: 'default'
 append :linked_files, "config/database.yml", "config/secrets.yml"
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "public/spree"
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/spree'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
