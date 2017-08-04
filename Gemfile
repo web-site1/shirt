@@ -70,3 +70,4 @@ gem 'dotenv'
 
 # AWS
 gem 'aws-sdk'
+gem 'mysql2'
