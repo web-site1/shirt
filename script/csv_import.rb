@@ -116,7 +116,7 @@ BEGIN{
     p_meta = h[:descrip]
     p_key = "#{h[:sku]} #{h[:style_name]} #{h[:group_name]}"
 
-    product_sku = %Q{#{h[:group].strip}-#{h[:season].to_s.strip}-#{h[:style_name].strip}-#{h[:color_code].strip}}
+    product_sku = %Q{#{h[:group].strip}-#{h[:season].to_s.strip}-#{h[:style].strip}}
 
 
     product = nil
@@ -130,7 +130,7 @@ BEGIN{
 
     if product.nil?
 
-      title = %Q{#{h[:style_name].strip} #{h[:group_name].strip}}
+      title = %Q{#{h[:style_name].strip} #{h[:group_name].strip} (#{h[:style].strip})}
 
       @action = "Created"
       product = Spree::Product.new(
@@ -175,6 +175,16 @@ BEGIN{
   # at the moment the taxon is the group with the
   # taxonomie as the group also
     group = h[:group_name].strip.titleize
+    tgender = h[:gender_name].strip
+    gender = ''
+    case tgender
+      when /women/i
+        gender = 'Ladies'
+      when /mens/i
+       gender = 'Mens'
+      else
+        gender = tgender
+    end
 
     this_product_group_taxonomy = Spree::Taxonomy.find_by_name(group)
     if this_product_group_taxonomy.nil?
@@ -183,17 +193,20 @@ BEGIN{
       )
     end
 
-
     this_product_group_taxon = Spree::Taxon.find_by_taxonomy_id_and_name(this_product_group_taxonomy.id,group)
-    if this_product_group_taxon.nil?
-      this_product_group_taxon = Spree::Taxon.create(
-          name: group,
-          taxonomy_id: this_product_group_taxonomy.id
+
+
+    this_product_gender_taxon = Spree::Taxon.find_by_taxonomy_id_and_name(this_product_group_taxonomy.id,gender)
+    if this_product_gender_taxon.nil?
+      this_product_gender_taxon = Spree::Taxon.create(
+          name: gender,
+          taxonomy_id: this_product_group_taxonomy.id,
+          parent_id: this_product_group_taxon.id
       )
     end
 
-    if !product.taxons.include?(this_product_group_taxon)
-      product.taxons << this_product_group_taxon
+    if !product.taxons.include?(this_product_gender_taxon)
+      product.taxons << this_product_gender_taxon
     end
 
     product.save
