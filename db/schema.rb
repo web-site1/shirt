@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170804233627) do
+ActiveRecord::Schema.define(version: 20171019145816) do
 
   create_table "friendly_id_slugs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "slug", null: false
@@ -24,6 +24,19 @@ ActiveRecord::Schema.define(version: 20170804233627) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", length: { slug: 20, sluggable_type: 20 }
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "import_groups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "group"
+    t.string "name"
+    t.string "desc"
+    t.string "var1"
+    t.string "var2"
+    t.string "var3"
+    t.string "var4"
+    t.string "var5"
+    t.string "colors"
+    t.index ["group"], name: "index_import_groups_on_group"
   end
 
   create_table "spree_addresses", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

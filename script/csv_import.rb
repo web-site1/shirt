@@ -116,7 +116,9 @@ BEGIN{
     p_meta = h[:descrip]
     p_key = "#{h[:sku]} #{h[:style_name]} #{h[:group_name]}"
 
-    product_sku = %Q{#{h[:group].strip}-#{h[:season].to_s.strip}-#{h[:style].strip}}
+    psku = %Q{#{h[:group].strip}-#{h[:season].to_s.strip}-#{h[:style_name].strip}}
+
+    product_sku = psku.gsub(" ","_")
 
 
     product = nil
@@ -130,12 +132,20 @@ BEGIN{
 
     if product.nil?
 
-      title = %Q{#{h[:style_name].strip} #{h[:group_name].strip} (#{h[:style].strip})}
+      title = %Q{#{h[:style_name].strip} #{h[:group_name].strip}}
+
+      @ig = ImportGroup.find_by_group(h[:group])
+      desc = h[:descrip]
+      if @ig
+        desc = %Q{#{@ig.desc}\n\n}
+        desc += %Q{Colors:#{@ig.colors}}
+      end
+
 
       @action = "Created"
       product = Spree::Product.new(
           name: title,
-          description: h[:descrip],
+          description: desc,
           available_on: Date.today()-1.day,
           shipping_category_id: 1 ,
           meta_title: title,
@@ -195,6 +205,19 @@ BEGIN{
 
     this_product_group_taxon = Spree::Taxon.find_by_taxonomy_id_and_name(this_product_group_taxonomy.id,group)
 
+    if this_product_group_taxon
+      desc = ""
+      if @ig &&  h[:group] == @ig.group
+        desc = @ig.desc
+      else
+        @ig = ImportGroup.find_by_group(h[:group])
+        desc = @ig.desc if @ig
+      end
+      if !(this_product_group_taxon.description == desc)
+        this_product_group_taxon.update_attribute(:description,desc)
+      end
+    end
+
 
     this_product_gender_taxon = Spree::Taxon.find_by_taxonomy_id_and_name(this_product_group_taxonomy.id,gender)
     if this_product_gender_taxon.nil?
@@ -218,7 +241,18 @@ BEGIN{
     # hash and data contained in passed hash record
     @properties_hash.each do |k,v|
 
-      val_from_rec = rec_hash[v.last.to_sym]
+      val_from_rec = nil
+      if v.last.blank?
+        #web_group_value
+        if @ig &&  rec_hash[:group] == @ig.group
+          val_from_rec = @ig.var2
+        else
+          @ig = ImportGroup.find_by_group(rec_hash[:group])
+          val_from_rec = @ig.var2 if @ig
+        end
+      else
+        val_from_rec = rec_hash[v.last.to_sym]
+      end
 
       if (val_from_rec && !val_from_rec.to_s.strip.empty?)
         val_array = []
@@ -251,7 +285,6 @@ BEGIN{
 
 
   def create_variants(product,h = {})
-
     variant = Spree::Variant.find_by_sku(h[:sku])
     if variant.nil?
       variant = Spree::Variant.new(
@@ -266,32 +299,42 @@ BEGIN{
     end
 
     @options.each do |o|
-      oval = h[@option_match[o.name].to_sym]
-      opt_val_obj = Spree::OptionValue.find_by_option_type_id_and_name(o.id,oval)
+
+      oval = @option_match[o.name]
+
+      if oval.class == Array
+        n = h[oval.first.to_sym]
+        p = h[oval.last.to_sym]
+      else
+        n = h[oval.to_sym]
+        p = h[oval.to_sym]
+      end
+
+      next if n.to_s.strip.blank?
+      
+      opt_val_obj = Spree::OptionValue.find_by_option_type_id_and_name(o.id,n)
       if opt_val_obj.nil?
         opt_val_obj = Spree::OptionValue.create(
             option_type_id: o.id,
-            presentation: oval,
-            name: oval
+            presentation: p,
+            name: n
         )
       end
+
       if !variant.option_values.include?(opt_val_obj)
         variant.option_values << opt_val_obj
       end
     end
-
-
     variant.save!
-
-
   end
-
-
 
 
   def setup_product_options
     @options = []
-    @option_match = {'neck' => 'size','color' => 'color'}
+    @option_match = {'neck' => 'size',
+                     'color' => ['color_code','color_name'],
+                     'sleeve' => 'sleeve'
+    }
     # setup options for products
     @neck_option = Spree::OptionType.find_by_name('neck')
     if @neck_option.nil?
@@ -308,6 +351,16 @@ BEGIN{
     end
 
     @options << @color_option
+
+
+    @sleeve_option = Spree::OptionType.find_by_name('sleeve')
+    if @sleeve_option.nil?
+      @sleeve_option = Spree::OptionType.create(      name: 'sleeve',
+                                                     presentation: 'Sleeve')
+    end
+
+    @options << @sleeve_option
+
     
   end
 
@@ -329,37 +382,16 @@ BEGIN{
       )
     end
     @properties_hash.merge!(style: [@style_prop,"style_name"] )
-#shirt type
-    @shirt_type_prop = Spree::Property.find_by_name('type')
-    if @shirt_type_prop.nil?
-      @shirt_type_prop = Spree::Property.create(
-          name: 'type',
-          presentation: "Shirt Type"
+#material
+    @material_prop = Spree::Property.find_by_name('material')
+    if @material_prop.nil?
+      @material_prop = Spree::Property.create(
+          name: 'material',
+          presentation: "Material"
       )
     end
-    @properties_hash.merge!(type: [@shirt_type_prop,"group_name"] )
-#sleve type
-    @sleeve_type_prop = Spree::Property.find_by_name('sleeve_type')
-    if @sleeve_type_prop.nil?
-      @sleeve_type_prop = Spree::Property.create(
-          name: 'sleeve_type',
-          presentation: "Sleeve Type"
-      )
-    end
-    @properties_hash.merge!(sleve_type: [@sleeve_type_prop,"sleeve"] )
-#gender
-    @gender_prop = Spree::Property.find_by_name('gender')
-    if @gender_prop.nil?
-      @gender_prop = Spree::Property.create(
-          name: 'gender',
-          presentation: "Gender"
-      )
-    end
-    @properties_hash.merge!(gender: [@gender_prop,"gender_name"] )
-
-
-
-
+    @properties_hash.merge!(material: [@material_prop,""] )
   end
+
 }
 
