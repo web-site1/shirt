@@ -13,12 +13,14 @@ if ARGV[1] && ARGV[1] == 'delete_all'
   Spree::Product.destroy_all
   Spree::Product.unscoped.delete_all
   Spree::Variant.unscoped.delete_all
+  Spree::OptionValueVariant.unscoped.delete_all
   Spree::Property.delete_all
   Spree::ProductProperty.delete_all
 
   Spree::Price.delete_all
   Spree::Taxon.destroy_all
   Spree::Taxonomy.destroy_all
+  puts 'Done deleting.'
 end
 
 if Rails.env == 'staging'
