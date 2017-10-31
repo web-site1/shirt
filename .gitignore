@@ -30,5 +30,3 @@ solr/development/
 solr/pids/
 solr/test/
 public/sitemap*
-
-.env
