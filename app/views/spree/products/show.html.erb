@@ -36,9 +36,17 @@
             <%= product_description(@product) %>
           </div>
 
+          <div id="color-images" class=" five " data-hook="product_colors">
+            <%= render partial: 'my_style_images' %>
+          </div>
+
           <div id="cart-form" data-hook="cart_form">
             <%= render partial: 'cart_form' %>
           </div>
+        </div>
+
+        <div id="color-images" class=" five " data-hook="product_colors">
+          <%= render partial: 'my_style_images' %>
         </div>
 
         <div id="taxon-crumbs" class=" five " data-hook="product_taxons">

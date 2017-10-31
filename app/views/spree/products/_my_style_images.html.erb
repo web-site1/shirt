@@ -1,0 +1,14 @@
+<% my_styles = Spree::Variant.my_styles(@product.sku) %>
+<% if my_styles.present? %>
+    <h3 class="product-section-title"><%= Spree.t(:select_color) %></h3>
+    <ul class="color-thumbnails list-inline" id="color-thumbnails" data-hook>
+      <% my_styles.each do |style| %>
+          <% url = spree.product_path(style.product, taxon_id: style.product.taxons.first.try(:id)) %>
+          <li class="list-group-item">
+            <%= link_to url, itemprop: "url" do %>
+                <%= mini_image(style.product, itemprop: 'url') %>
+            <% end %>
+          </li>
+      <% end %>
+    </ul>
+<% end %>
