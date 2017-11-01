@@ -15,7 +15,7 @@
              end
           %>
 
-          <%= select_tag 'variants', options_for_select(opts) %>
+          <%= select_tag 'variants', options_for_select(opts), {name: 'variant_id'} %>
         </div>
       </div>
     <% else %>
