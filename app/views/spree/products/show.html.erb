@@ -35,6 +35,9 @@
           <div class="well" itemprop="description" data-hook="description">
             <%= product_description(@product) %>
           </div>
+          <div>
+            SKU: <%= @product.sku %>
+          </div>
 
           <div id="color-images" class=" five " data-hook="product_colors">
             <%= render partial: 'my_style_images' %>

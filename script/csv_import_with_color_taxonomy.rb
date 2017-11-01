@@ -10,6 +10,7 @@ require File.expand_path('../../config/environment', __FILE__)
 
 if ARGV[1] && ARGV[1] == 'delete_all'
   puts 'Deleting existing data...'
+  Spree::Order.destroy_all
   Spree::Product.destroy_all
   Spree::Product.unscoped.delete_all
   Spree::Variant.unscoped.delete_all
