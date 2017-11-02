@@ -9,10 +9,13 @@
 require File.expand_path('../../config/environment', __FILE__)
 
 if ARGV[1] && ARGV[1] == 'delete_all'
-  puts 'Deleting existing data...'
+  puts 'About to Deleting existing data... press [Ctrl]-[C] within 5 secs to abort:'
+  sleep 5
   Spree::Order.destroy_all
+  Spree::Order.unscoped.delete_all
   Spree::Product.destroy_all
   Spree::Product.unscoped.delete_all
+  Spree::Price.unscoped.delete_all
   Spree::Variant.unscoped.delete_all
   Spree::OptionValueVariant.unscoped.delete_all
   Spree::Property.delete_all
@@ -21,8 +24,13 @@ if ARGV[1] && ARGV[1] == 'delete_all'
   Spree::Price.delete_all
   Spree::Taxon.destroy_all
   Spree::Taxonomy.destroy_all
-  puts 'Done deleting.'
+  [Spree::Order, Spree::Product, Spree::Price, Spree::Variant, Spree::OptionValueVariant, Spree::Property, Spree::Price, Spree::Taxon, Spree::Taxonomy].each do |model|
+    sql_exec("ALTER TABLE  #{model.table_name} AUTO_INCREMENT = 1")
+  end
+  puts 'Done deleting [Ctrl]-[C] within 3 secs to quit: '
+  sleep 3
 end
+
 
 if Rails.env == 'staging'
   @local_site_path = '/tmp/images/'
@@ -335,6 +343,10 @@ BEGIN {
       end
     end
     variant.save!
+
+    # Update inv qty
+    stock_item = Spree::StockItem.find_by(variant_id: variant.id)
+    stock_item.set_count_on_hand(h[:inventory])
   end
 
   def setup_product_options
@@ -394,4 +406,8 @@ BEGIN {
     @properties_hash.merge!(material: [@material_prop, ''])
   end
 
+  def sql_exec(sql)
+    ActiveRecord::Base.connection.execute(sql)
+  end
 }
+

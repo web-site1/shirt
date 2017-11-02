@@ -10,7 +10,8 @@
                           variant.options_text,
                           variant.id,
                           data: {price:  variant.price_in(current_currency).money.to_s,
-                                 in_stock: variant.can_supply?}
+                                 on_hand:   variant.total_on_hand,
+                                 in_stock:  variant.can_supply?}
                         ]
              end
           %>
@@ -24,21 +25,32 @@
 
     <% if @product.price_in(current_currency) && !@product.price.nil? %>
       <div data-hook="product_price" class="col-md-5">
-        <div id="product-price">
-          <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
-          <div>
-            <span class="lead price selling" itemprop="price" content="<%= @product.price_in(current_currency).amount.to_d %>">
-              <%= display_price(@product) %>
-            </span>
-            <span itemprop="priceCurrency" content="<%= current_currency %>"></span>
-          </div>
 
-          <% if @product.master.can_supply? %>
-            <link itemprop="availability" href="https://schema.org/InStock" />
-          <% elsif @product.variants.empty? %>
-            <br />
-            <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
-          <% end %>
+        <div id="product-price">
+          <ul class="list-inline">
+            <li>
+              <h6 class="product-section-title"><%= Spree.t(:qty_available) %></h6>
+            </li>
+            <li class="qty on-hand" style="width: 50px">
+            </li>
+            <li>
+              <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
+            </li>
+            <li>
+              <span class="lead price selling" itemprop="price" content="<%= @product.price_in(current_currency).amount.to_d %>">
+                <%= display_price(@product) %>
+              </span>
+              <span itemprop="priceCurrency" content="<%= current_currency %>"></span>
+              <% if @product.master.can_supply? %>
+                  <link itemprop="availability" href="https://schema.org/InStock" />
+              <% elsif @product.variants.empty? %>
+                  <br />
+                  <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
+              <% end %>
+
+            </li>
+
+          </ul>
         </div>
 
         <% if @product.can_supply? %>

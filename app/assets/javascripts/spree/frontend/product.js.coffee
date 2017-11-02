@@ -33,6 +33,11 @@ Spree.ready ($) ->
   Spree.updateVariantPrice = (variant) ->
     variantPrice = variant.find(':selected').data('price')
     ($ '.price.selling').text(variantPrice) if variantPrice
+    
+  Spree.updateVariantOnHand = (variant) ->
+    variantOnHand = variant.find(':selected').data('on-hand')
+    ($ 'li.qty.on-hand').text(variantOnHand )
+
 
   Spree.disableCartForm = (variant) ->
     inStock = variant.find(':selected').data('in-stock')
@@ -49,11 +54,13 @@ Spree.ready ($) ->
   if selectElem.length > 0
     Spree.showVariantImages selectElem.attr('value')
     Spree.updateVariantPrice selectElem
+    Spree.updateVariantOnHand selectElem
     Spree.disableCartForm selectElem
 
     selectElem.change (event) ->
       Spree.showVariantImages @value
       Spree.updateVariantPrice ($ this)
+      Spree.updateVariantOnHand ($ this)
       Spree.disableCartForm ($ this)
 
   Spree.addImageHandlers()
