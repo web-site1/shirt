@@ -1,3 +1,128 @@
+
+.img-responsive.large-logo {
+max-width:70%;
+}
+
+<% width,height = calculate_product_image_dimensions(@product) %>
+.easyzoom--adjacent .easyzoom-flyout{
+width:<%= width.to_s %>px;
+height:<%= height.to_s %>px;
+}
+
+<% diff = (@product.variant_images.first.attachment_width - @product.variant_images.first.attachment_height rescue 50)
+   diff = diff * -1 if diff < 0
+   if diff < 25 %>
+
+    .product_main .easyzoom-overlay{
+    width:320px;
+    height:320px;
+    }
+
+<% end %>
+.easyzoom-flyout{
+border:5px solid #eee;
+background:#fff;
+color:#333;
+position:absolute;
+top:0px;
+overflow:hidden;
+-moz-box-shadow:0 0 10px #777;
+-webkit-box-shadow:0 0 10px #777;
+box-shadow:0 0 10px #777;
+/* vertical and horizontal alignment used for preloader text */
+line-height:<% height/2 %>px;
+text-align:center;
+z-index:99999;
+}
+
+.slider-for .slick-list{
+overflow: visible;
+}
+
+.slider-nav.ng-scope.slick-initialized.slick-slider{
+z-index:3;
+}
+
+.slider-for .slick-slide img{
+display:none !important;
+}
+
+.slider-for .slick-active img{
+display:block !important;
+}
+
+.slider-for .slick-track{
+height:240px;
+}
+
+html, body {
+max-width: 100% !important;
+overflow-x: hidden !important;
+}
+
+.back-btn{
+display:none;
+background: white;
+border: 1px solid;
+margin: 20px;
+position: absolute;
+}
+
+.h .back-btn{
+display:block;
+z-index:500;
+}
+
+<% #if (@product.variant_images.first.attachment_width rescue 0) <= 300 or (@product.variant_images.first.attachment_height rescue 0) <= 200  %>
+
+.easyzoom-flyout img{
+width:150%;
+height:150%;
+}
+<% #5r5end %>
+
+.h{
+position: absolute;
+top: 0px;
+width: 100%;
+height: 100%;
+z-index: 10000;
+background: white;
+margin-bottom: 0px;
+}
+
+.b{
+bottom:0px;
+position:absolute;
+margin-left:0px;
+width:100%;
+z-index:401;
+}
+
+.imageHolder{
+display:none;
+}
+
+.h .imageHolder{
+position:absolute;
+width:100%;
+height:100%;
+z-index:300;
+background: white;
+display:block;
+}
+
+.h .imageHolder img{
+/*width:100%;*/
+height:120%;
+}
+
+img.img-responsive.thumb-active{
+border: 1px solid red;
+}
+
+</style>
+
 <% @body_id = 'product-details' %>
 
 <% cache cache_key_for_product do %>

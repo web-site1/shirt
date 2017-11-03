@@ -72,6 +72,3 @@ gem 'dotenv'
 gem 'aws-sdk'
 gem 'mysql2'
 gem 'yaml_db'
-
-# React.JS
-gem 'react-rails'
