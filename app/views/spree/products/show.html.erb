@@ -1,128 +1,109 @@
+<style>
+  /**
+   * EasyZoom core styles
+   */
+  .easyzoom {
+    position: relative;
 
-.img-responsive.large-logo {
-max-width:70%;
-}
+    /* 'Shrink-wrap' the element */
+    /*display: inline-block;*/
+    *display: inline;
+    *zoom: 1;
+  }
 
-<% width,height = calculate_product_image_dimensions(@product) %>
-.easyzoom--adjacent .easyzoom-flyout{
-width:<%= width.to_s %>px;
-height:<%= height.to_s %>px;
-}
+  .easyzoom img {
+    vertical-align: bottom;
+  }
 
-<% diff = (@product.variant_images.first.attachment_width - @product.variant_images.first.attachment_height rescue 50)
-   diff = diff * -1 if diff < 0
-   if diff < 25 %>
+  .easyzoom.is-loading img {
+    cursor: progress;
+  }
 
-    .product_main .easyzoom-overlay{
+  .easyzoom.is-ready img {
+    cursor: crosshair;
+    cursor: zoom-in;
+  }
+
+  .easyzoom.is-error  img {
+    cursor: not-allowed;
+  }
+
+  .easyzoom-notice {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 150;
+    width: 10em;
+    margin: -1em 0 0 -5em;
+    line-height: 2em;
+    text-align: center;
+    background: #FFF;
+    box-shadow: 0 0 10px #888;
+  }
+
+  .easyzoom-flyout {
+    position:absolute;
+    z-index: 100;
+    overflow: hidden;
+    background: #FFF;
+  }
+
+  .easyzoom-flyout img{
+    max-width:none;
+    max-height:none;
+  }
+
+  /**
+   * EasyZoom layout variations
+   */
+  .easyzoom--overlay .easyzoom-flyout {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .easyzoom--adjacent .easyzoom-flyout {
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    margin-left: 20px;
+  }
+
+  <% width,height = calculate_product_image_dimensions(@product) %>
+  .easyzoom--adjacent .easyzoom-flyout{
+    width:<%= width.to_s %>px;
+    height:<%= height.to_s %>px;
+  }
+
+  <% diff = (@product.variant_images.first.attachment_width - @product.variant_images.first.attachment_height rescue 50)
+    diff = diff * -1 if diff < 0
+    if diff < 25 %>
+
+  .product_main .easyzoom-overlay{
     width:320px;
     height:320px;
-    }
+  }
 
-<% end %>
-.easyzoom-flyout{
-border:5px solid #eee;
-background:#fff;
-color:#333;
-position:absolute;
-top:0px;
-overflow:hidden;
--moz-box-shadow:0 0 10px #777;
--webkit-box-shadow:0 0 10px #777;
-box-shadow:0 0 10px #777;
-/* vertical and horizontal alignment used for preloader text */
-line-height:<% height/2 %>px;
-text-align:center;
-z-index:99999;
-}
-
-.slider-for .slick-list{
-overflow: visible;
-}
-
-.slider-nav.ng-scope.slick-initialized.slick-slider{
-z-index:3;
-}
-
-.slider-for .slick-slide img{
-display:none !important;
-}
-
-.slider-for .slick-active img{
-display:block !important;
-}
-
-.slider-for .slick-track{
-height:240px;
-}
-
-html, body {
-max-width: 100% !important;
-overflow-x: hidden !important;
-}
-
-.back-btn{
-display:none;
-background: white;
-border: 1px solid;
-margin: 20px;
-position: absolute;
-}
-
-.h .back-btn{
-display:block;
-z-index:500;
-}
-
-<% #if (@product.variant_images.first.attachment_width rescue 0) <= 300 or (@product.variant_images.first.attachment_height rescue 0) <= 200  %>
-
-.easyzoom-flyout img{
-width:150%;
-height:150%;
-}
-<% #5r5end %>
-
-.h{
-position: absolute;
-top: 0px;
-width: 100%;
-height: 100%;
-z-index: 10000;
-background: white;
-margin-bottom: 0px;
-}
-
-.b{
-bottom:0px;
-position:absolute;
-margin-left:0px;
-width:100%;
-z-index:401;
-}
-
-.imageHolder{
-display:none;
-}
-
-.h .imageHolder{
-position:absolute;
-width:100%;
-height:100%;
-z-index:300;
-background: white;
-display:block;
-}
-
-.h .imageHolder img{
-/*width:100%;*/
-height:120%;
-}
-
-img.img-responsive.thumb-active{
-border: 1px solid red;
-}
+  <% end %>
+  .easyzoom-flyout{
+    border:5px solid #eee;
+    background:#fff;
+    color:#333;
+    position:absolute;
+    top:0px;
+    overflow:hidden;
+    -moz-box-shadow:0 0 10px #777;
+    -webkit-box-shadow:0 0 10px #777;
+    box-shadow:0 0 10px #777;
+    /* vertical and horizontal alignment used for preloader text */
+    line-height:<% height/2 %>px;
+    text-align:center;
+    z-index:99999;
+  }
 
 </style>
-
 <% @body_id = 'product-details' %>
 
 <% cache cache_key_for_product do %>
@@ -136,8 +117,10 @@ border: 1px solid red;
       <div data-hook="product_left_part_wrap">
         <div  data-hook="product_images">
           <div id="main-image" class="panel panel-default" data-hook>
-            <div class="panel-body text-center">
-              <%= product_image(@product, itemprop: "image") %>
+            <div class="panel-body text-center easyzoom easyzoom--adjacent easyzoom--with-thumbnails">
+              <a href="<%= @product.images.first.attachment.url(:large) %>">
+                <%= product_image(@product, itemprop: "url") %>
+              </a>
             </div>
           </div>
         </div>
@@ -164,7 +147,7 @@ border: 1px solid red;
           </div>
 
           <div id="color-images" class=" five " data-hook="product_colors">
-            <%= render partial: 'my_style_images' %>
+            <%= render partial: 'color_images' %>
           </div>
 
           <div id="cart-form" data-hook="cart_form">
@@ -177,3 +160,15 @@ border: 1px solid red;
     </div>
   </div>
 <% end %>
+<script>
+    // Instantiate EasyZoom instances
+    var $easyzoom = $('.easyzoom').easyZoom();
+    // Setup thumbnails example
+    var api1 = $easyzoom.filter('.easyzoom--with-thumbnails').data('easyZoom');
+    $('.thumbnails').on('click', 'a', function(e) {
+        var $this = $(this);
+        e.preventDefault();
+        // Use EasyZoom's `swap` method
+        api1.swap($this.data('standard'), $this.attr('href'));
+    });
+</script>
